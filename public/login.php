@@ -45,6 +45,7 @@ if (isset($_POST['submit'])) {
 	  }
   ?>
   <h3>Sign-in</h3>
+  <?php echo form_errors($errors); ?>
   <form action="login.php" method="post">
     <p>Username:
       <input type="text" name="username" value="" />
