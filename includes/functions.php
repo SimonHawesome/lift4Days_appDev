@@ -107,13 +107,71 @@ function attempt_login($username, $password) {
 }
 
 function logged_in() {
-		return isset($_SESSION['admin_id']);
-	}
-	
-	function confirm_logged_in() {
-		if (!logged_in()) {
-			redirect_to("login.php");
-		}
-	}
+	return isset($_SESSION['admin_id']);
+}
 
+function confirm_logged_in() {
+	if (!logged_in()) {
+		redirect_to("login.php");
+	}
+}
+
+function get_workouts($muscle_group){
+	global $connection;	
+	
+	$query  = "SELECT * ";
+	$query .= "FROM exercises ";
+	$query .= "WHERE muscle_group = '{$muscle_group}'";
+	
+	$all_workouts = mysqli_query($connection, $query);
+	confirm_query($all_workouts);
+	return $all_workouts;
+}
+
+function append_workouts($muscle_group){
+	
+	$all_workouts = get_workouts($muscle_group);
+	$output  = "<form method='POST' action='log_workout.php'>";
+    $output .= "<select name='exerciseChoice'>";
+	while($workout = mysqli_fetch_assoc($all_workouts)){
+		
+		/*$select_value = trim($workout, " ");*/
+		
+		$output .= "<option ";
+		$output .= "value='";
+		$output .= $workout["type"];
+		$output .= "'>";
+		$output .= $workout["type"];
+		$output .= "</option></br>";
+	}
+	$output .= "</select></form>";
+	mysqli_free_result($all_workouts);
+	return $output;
+}
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
