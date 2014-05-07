@@ -116,24 +116,47 @@ function confirm_logged_in() {
 	}
 }
 
-function get_workouts($muscle_group){
+function get_workouts(){
+	global $connection;
+	
+	$query = "SELECT * FROM muscle_groups";
+	$all_workouts = mysqli_query($connection, $query);
+	confirm_query($all_workouts);
+	/*return $all_workouts;*/
+	
+	$output  = "<div id='muscleGroupContainer'>";
+	while($muscleGroups = mysqli_fetch_assoc($all_workouts)){
+		$output .= "<div class='muscleGroups' ";
+		$output .= "id='";
+		$output .= $muscleGroups["muscle_group"];
+		$output .= "'>";
+		$output .= ucfirst(htmlentities($muscleGroups["muscle_group"]));
+		$output .= "</div>";
+	}
+	$output .= "</div>";
+	return $output;
+}
+
+function get_related_workouts($muscle_group){
 	global $connection;	
 	
 	$query  = "SELECT * ";
 	$query .= "FROM exercises ";
 	$query .= "WHERE muscle_group = '{$muscle_group}'";
 	
-	$all_workouts = mysqli_query($connection, $query);
-	confirm_query($all_workouts);
-	return $all_workouts;
+	$all_related_workouts = mysqli_query($connection, $query);
+	confirm_query($all_related_workouts);
+	return $all_related_workouts;
 }
 
 function append_workouts($muscle_group){
 	
-	$all_workouts = get_workouts($muscle_group);
-	$output  = "<form method='POST' action='log_workout.php'>";
+	$all_related_workouts = get_related_workouts($muscle_group);
+	$output  = "<form method='POST' action='log_workout.php?workout=";
+	$output .= $muscle_group;
+	$output .= "'>";
     $output .= "<select name='exerciseChoice'>";
-	while($workout = mysqli_fetch_assoc($all_workouts)){
+	while($workout = mysqli_fetch_assoc($all_related_workouts)){
 		
 		/*$select_value = trim($workout, " ");*/
 		
@@ -144,34 +167,13 @@ function append_workouts($muscle_group){
 		$output .= $workout["type"];
 		$output .= "</option></br>";
 	}
-	$output .= "</select></form>";
-	mysqli_free_result($all_workouts);
+	$output .= "</select><input type='submit' name='submit_set' value='continue' /></form></br>";
+	$output .= "<a href='log_workout.php'>back</a>";
+	mysqli_free_result($all_related_workouts);
 	return $output;
 }
+
+function create_workout_form($admin, $muscle_group){
+	
+}
 ?>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

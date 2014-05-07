@@ -12,7 +12,7 @@
 	}
 ?>
 
-<a href="">Log Workout</a><br />
+<a href="log_workout.php">Log Workout</a><br />
 <br />
 <a href="">View logged workouts</a><br />
 <br />
