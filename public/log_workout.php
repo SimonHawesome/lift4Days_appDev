@@ -22,24 +22,39 @@ if(isset($_GET["muscle"])){
 	}else if($get_muscle == "shoulders"){
 		echo append_workouts($get_muscle);	
 	}
+	//create variable for set position
+	$_SESSION['setPos'] = 0;
 }else if(isset($_GET["workout"])){
 	// 3. Display form fields for chosen muscle group
 	echo form_errors($errors);
 	$admin = $_SESSION["admin_id"];
 	$workout = $_GET["workout"];
-	$date = date('l jS');
+	$date = date('Y-m-d');
+	
 	//Process signup form
 	if(isset($_POST['submit'])){
+		
+		if($_SESSION['setPos'] >= 0){
+			$_SESSION['setPos'] ++;	
+		}
+		
 		//Validate form fields
-		$required_field = array();
+		$required_field = array("reps", "weight");
 		validate_presences($required_field);
+		
+		//set form value variables
+		$reps = $_POST["reps"];
+		$weight = $_POST["weight"];
+		$notes = $_POST["notes"];
+		$setPos = $_SESSION['setPos'];
+		
 		
 		if(empty($errors)){
 			
 			$query  = "INSERT INTO exercise_logs (";
-			$query .= " muscle_group, admin_id";
+			$query .= "muscle_group, admin_id, date, sets, reps, weight, notes";
 			$query .= ") VALUES (";
-			$query .= " '{$workout}', {$admin}";
+			$query .= "'{$workout}', {$admin}, '{$date}', {$setPos}, {$reps}, {$weight}, '{$notes}'";
 			$query .= ")";
 			$result = mysqli_query($connection, $query);
 			
@@ -56,16 +71,25 @@ if(isset($_GET["muscle"])){
 	
 ?>
 <?php echo form_errors($errors); ?>
-<?php echo $_SESSION["msg"]; ?>
+<?php echo errorMsg(); ?>
     <form action="log_workout.php?workout=<?php echo $workout; ?>" method="POST">
         <p>Admin: <?php echo $admin; ?></p>
         <p>Workout: <?php echo $workout; ?></p>
         <p>Date: <?php echo $date; ?></p>
+        <p>Set:<?php echo $_SESSION['setPos'] + 1; ?></p>
         <p>Reps:
         <input type="text" name="reps" value="" />
         </p>
+        <p>Weight:
+        <input type="text" name="weight" value="" />
+        </p>
+        <p>Notes:
+        <input type="text" name="notes" value="" />
+        </p>
       <input type="submit" name="submit" value="Submit set" />
     </form>
+    
+    <a href='log_workout.php'>back</a>
 <?php
 }else{
 	// 1. Display all Muscle Groups in separate divs
