@@ -4,6 +4,7 @@
 <?php require_once("../includes/validation_functions.php"); ?>
 <?php require_once("../includes/header.php"); ?>
 <?php confirm_logged_in(); ?>
+
 <?php
 if(isset($_GET["muscle"])){
 	$get_muscle = $_GET["muscle"];
