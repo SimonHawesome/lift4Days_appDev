@@ -152,9 +152,7 @@ function get_related_workouts($muscle_group){
 function append_workouts($muscle_group){
 	
 	$all_related_workouts = get_related_workouts($muscle_group);
-	$output  = "<form method='POST' action='log_workout.php?workout=";
-	$output .= $muscle_group;
-	$output .= "'>";
+	$output  = "<form method='POST' action='log_workout.php'>";
     $output .= "<select name='exerciseChoice'>";
 	while($workout = mysqli_fetch_assoc($all_related_workouts)){
 		

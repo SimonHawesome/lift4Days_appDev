@@ -4,7 +4,6 @@
 <?php require_once("../includes/validation_functions.php"); ?>
 <?php require_once("../includes/header.php"); ?>
 <?php confirm_logged_in(); ?>
-
 <?php
 if(isset($_GET["muscle"])){
 	$get_muscle = $_GET["muscle"];
@@ -25,14 +24,21 @@ if(isset($_GET["muscle"])){
 	}
 	//create variable for set position
 	$_SESSION['setPos'] = 0;
-}else if(isset($_GET["workout"])){
+}else if(isset($_POST["exerciseChoice"]) || isset($_GET["workout"])){
 	// 3. Display form fields for chosen muscle group
+	
+	if(isset($_POST["exerciseChoice"])){
+		$workout = str_replace(' ', '', $_POST["exerciseChoice"]);
+	}else if(isset($_GET["workout"])){
+		$workout = $_GET["workout"];
+	}
+	
 	echo form_errors($errors);
+	
 	$admin = $_SESSION["admin_id"];
-	$workout = $_GET["workout"];
 	$date = date('Y-m-d');
 	
-	//Process signup form
+	// 4. Process signup form
 	if(isset($_POST['submit'])){
 		
 		if($_SESSION['setPos'] >= 0){
@@ -53,9 +59,9 @@ if(isset($_GET["muscle"])){
 		if(empty($errors)){
 			
 			$query  = "INSERT INTO exercise_logs (";
-			$query .= "muscle_group, admin_id, date, sets, reps, weight, notes";
+			$query .= " muscle_group, admin_id, date, sets, reps, weight, notes ";
 			$query .= ") VALUES (";
-			$query .= "'{$workout}', {$admin}, '{$date}', {$setPos}, {$reps}, {$weight}, '{$notes}'";
+			$query .= " '{$workout}', {$admin}, '{$date}', {$setPos}, {$reps}, {$weight}, '{$notes}' ";
 			$query .= ")";
 			$result = mysqli_query($connection, $query);
 			
@@ -64,33 +70,32 @@ if(isset($_GET["muscle"])){
 			  $_SESSION["msg"] = "Set Updated.";
 			  redirect_to("log_workout.php?workout=" . $workout);
 			} else {
-			  // Failure
-			  $_SESSION["msg"] = "Set update failed.";
+				
+			    // Failure
+			    $_SESSION["msg"] = "Set update failed.";
 			}
 		}
 	}
 	
 ?>
-<?php echo form_errors($errors); ?>
-<?php echo errorMsg(); ?>
-    <form action="log_workout.php?workout=<?php echo $workout; ?>" method="POST">
-        <p>Admin: <?php echo $admin; ?></p>
-        <p>Workout: <?php echo $workout; ?></p>
-        <p>Date: <?php echo $date; ?></p>
-        <p>Set:<?php echo $_SESSION['setPos'] + 1; ?></p>
-        <p>Reps:
-        <input type="text" name="reps" value="" />
-        </p>
-        <p>Weight:
-        <input type="text" name="weight" value="" />
-        </p>
-        <p>Notes:
-        <input type="text" name="notes" value="" />
-        </p>
-      <input type="submit" name="submit" value="Submit set" />
-    </form>
-    
-    <a href='log_workout.php'>back</a>
+<?php echo form_errors($errors); ?> <?php echo errorMsg(); ?>
+<form action="log_workout.php?workout=<?php echo $workout; ?>" method="POST">
+  <p>Admin: <?php echo $admin; ?></p>
+  <p>Workout: <?php echo $workout; ?></p>
+  <p>Date: <?php echo $date; ?></p>
+  <p>Set:<?php echo $_SESSION['setPos'] + 1; ?></p>
+  <p>Reps:
+    <input type="text" name="reps" value="" />
+  </p>
+  <p>Weight:
+    <input type="text" name="weight" value="" />
+  </p>
+  <p>Notes:
+    <input type="text" name="notes" value="" />
+  </p>
+  <input type="submit" name="submit" value="Submit set" />
+</form>
+<a href='log_workout.php'>back</a>
 <?php
 }else{
 	// 1. Display all Muscle Groups in separate divs
