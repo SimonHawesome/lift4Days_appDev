@@ -38,12 +38,10 @@ if(isset($_GET["muscle"])){
 	$admin = $_SESSION["admin_id"];
 	$date = date('Y-m-d');
 	
-	// 4. Process signup form
+	// 4. Process log form
 	if(isset($_POST['submit'])){
 		
-		if($_SESSION['setPos'] >= 0){
-			$_SESSION['setPos'] ++;	
-		}
+		
 		
 		//Validate form fields
 		$required_field = array("reps", "weight");
@@ -59,7 +57,7 @@ if(isset($_GET["muscle"])){
 		if(empty($errors)){
 			
 			$query  = "INSERT INTO exercise_logs (";
-			$query .= " muscle_group, admin_id, date, sets, reps, weight, notes ";
+			$query .= " exercise, admin_id, date, sets, reps, weight, notes ";
 			$query .= ") VALUES (";
 			$query .= " '{$workout}', {$admin}, '{$date}', {$setPos}, {$reps}, {$weight}, '{$notes}' ";
 			$query .= ")";
@@ -68,6 +66,9 @@ if(isset($_GET["muscle"])){
 			if ($result) {
 			  // Success
 			  $_SESSION["msg"] = "Set Updated.";
+			  if($_SESSION['setPos'] >= 0){
+					$_SESSION['setPos'] ++;	
+				}
 			  redirect_to("log_workout.php?workout=" . $workout);
 			} else {
 				
@@ -81,7 +82,7 @@ if(isset($_GET["muscle"])){
 <?php echo form_errors($errors); ?> <?php echo errorMsg(); ?>
 <form action="log_workout.php?workout=<?php echo $workout; ?>" method="POST">
   <p>Admin: <?php echo $admin; ?></p>
-  <p>Workout: <?php echo $workout; ?></p>
+  <p>Workout: <?php echo str_replace('_', ' ', $workout); ?></p>
   <p>Date: <?php echo $date; ?></p>
   <p>Set:<?php echo $_SESSION['setPos'] + 1; ?></p>
   <p>Reps:
@@ -95,7 +96,8 @@ if(isset($_GET["muscle"])){
   </p>
   <input type="submit" name="submit" value="Submit set" />
 </form>
-<a href='log_workout.php'>back</a>
+<a href='log_workout.php'>back</a><br /><br />
+<a href='log_summary.php?workout=<?php echo $workout; ?>'>done</a><br />
 <?php
 }else{
 	// 1. Display all Muscle Groups in separate divs

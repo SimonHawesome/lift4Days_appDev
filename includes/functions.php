@@ -156,13 +156,12 @@ function append_workouts($muscle_group){
     $output .= "<select name='exerciseChoice'>";
 	while($workout = mysqli_fetch_assoc($all_related_workouts)){
 		
-		/*$select_value = trim($workout, " ");*/
 		
 		$output .= "<option ";
 		$output .= "value='";
 		$output .= $workout["type"];
 		$output .= "'>";
-		$output .= $workout["type"];
+		$output .= str_replace('_', ' ', $workout["type"]);
 		$output .= "</option></br>";
 	}
 	$output .= "</select><input type='submit' name='submit_set' value='continue' /></form></br>";
@@ -171,7 +170,25 @@ function append_workouts($muscle_group){
 	return $output;
 }
 
-function create_workout_form($admin, $muscle_group){
+function get_related_exercises($exercise, $date, $admin_id){
+	global $connection;	
+	
+	$query  = "SELECT * ";
+	$query .= "FROM exercises_logs ";
+	$query .= "WHERE exercise = '{$exercise}' ";
+	$query .= " AND date = '{$date}' ";
+	$query .= " AND admin_id = '{$admin_id}'";
+	
+	$all_related_exercises = mysqli_query($connection, $query);
+	confirm_query($all_related_exercises);
+	return $all_related_exercises;
+}
+
+function show_workout_summary($exercise, $date, $admin_id){
+	
+	$all_related_exercises = get_related_exercises($exercise, $date, $admin_id);
+	//left off here!!!!
+	$output  = "";
 	
 }
 ?>
