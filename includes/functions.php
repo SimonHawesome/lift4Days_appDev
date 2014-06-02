@@ -174,10 +174,10 @@ function get_related_exercises($exercise, $date, $admin_id){
 	global $connection;	
 	
 	$query  = "SELECT * ";
-	$query .= "FROM exercises_logs ";
+	$query .= "FROM exercise_logs ";
 	$query .= "WHERE exercise = '{$exercise}' ";
-	$query .= " AND date = '{$date}' ";
-	$query .= " AND admin_id = '{$admin_id}'";
+	$query .= "AND date = '{$date}' ";
+	$query .= "AND admin_id = {$admin_id}";
 	
 	$all_related_exercises = mysqli_query($connection, $query);
 	confirm_query($all_related_exercises);
@@ -187,8 +187,22 @@ function get_related_exercises($exercise, $date, $admin_id){
 function show_workout_summary($exercise, $date, $admin_id){
 	
 	$all_related_exercises = get_related_exercises($exercise, $date, $admin_id);
-	//left off here!!!!
-	$output  = "";
 	
+	while($rel_exercise = mysqli_fetch_assoc($all_related_exercises)){
+		$output  = "<h2> " . $rel_exercise['exercise'] . "</h2>";
+		$output .= "</br>";
+		$output .= "<h3> " . $rel_exercise['date'] . "</h3>";
+		$output .= "</br>";
+		$output .= "<p> " . $rel_exercise['sets'] . "</p>";
+		$output .= "</br>";
+		$output .= "<p> " . $rel_exercise['reps'] . "</p>";
+		$output .= "</br>";
+		$output .= "<p> " . $rel_exercise['weight'] . "</p>";
+		$output .= "</br>";
+		$output .= "<p> " . $rel_exercise['notes'] . "</p>";
+		$output .= "</br>";
+	}
+	mysqli_free_result($all_related_exercises);
+	return $output;
 }
 ?>

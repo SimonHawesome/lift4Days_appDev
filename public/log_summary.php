@@ -13,10 +13,6 @@ $date = date('Y-m-d');
 $admin_id = $_SESSION["admin_id"];
 
 echo show_workout_summary($exercise, $date, $admin_id);
-
 ?>
-
-
-
 
 <?php require_once("../includes/footer.php"); ?>
